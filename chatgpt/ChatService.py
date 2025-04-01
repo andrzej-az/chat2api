@@ -331,7 +331,7 @@ class ChatService:
             "model": self.req_model,
             "paragen_cot_summary_display_override": "allow",
             "paragen_stream_type_override": None,
-            "parent_message_id": self.parent_message_id if self.parent_message_id else f"{uuid.uuid4()}",
+            "parent_message_id": self.parent_message_id if self.parent_message_id else f"client-created-root",
             "reset_rate_limits": False,
             "suggestions": [],
             "supported_encodings": [],
@@ -341,6 +341,8 @@ class ChatService:
             "variant_purpose": "comparison_implicit",
             "websocket_request_id": f"{uuid.uuid4()}",
         }
+        if "image" in self.origin_model or "image" in self.req_model:
+            self.chat_request["system_hints"].append("picture_v2")
         if self.conversation_id:
             self.chat_request['conversation_id'] = self.conversation_id
         return self.chat_request
@@ -474,7 +476,7 @@ class ChatService:
         headers.pop('oai-device-id', None)
         headers.pop('oai-language', None)
         try:
-            r = await self.s.put(upload_url, headers=headers, data=file_content, timeout=60)
+            r = await self.s.put(upload_url, headers=headers, data=file_content, timeout=120)
             if r.status_code == 201:
                 return True
             else:
