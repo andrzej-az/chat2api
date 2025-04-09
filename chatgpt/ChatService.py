@@ -463,26 +463,24 @@ class ChatService:
             return "", ""
 
     async def upload(self, upload_url, file_content, mime_type):
-        headers = self.base_headers.copy()
-        headers.update(
-            {
-                'accept': 'application/json, text/plain, */*',
-                'content-type': mime_type,
-                'x-ms-blob-type': 'BlockBlob',
-                'x-ms-version': '2020-04-08',
-            }
-        )
-        headers.pop('authorization', None)
-        headers.pop('oai-device-id', None)
-        headers.pop('oai-language', None)
-        try:
-            r = await self.s.put(upload_url, headers=headers, data=file_content, timeout=120)
-            if r.status_code == 201:
-                return True
-            else:
-                raise HTTPException(status_code=r.status_code, detail=r.text)
-        except Exception as e:
-            logger.error(f"Failed to upload file: {e}")
+        for i in range(3):
+            try:
+                headers = self.base_headers.copy()
+                headers.update({
+                        'accept': 'application/json, text/plain, */*',
+                        'content-type': mime_type,
+                        'x-ms-blob-type': 'BlockBlob',
+                        'x-ms-version': '2020-04-08',
+                })
+                r = await self.s.put(upload_url, headers=headers, data=file_content, timeout=120)
+                if r.status_code == 201:
+                    return True
+                else:
+                    raise HTTPException(status_code=r.status_code, detail=r.text)
+            except Exception as e:
+                logger.error(f"Failed to upload file: {e}")
+        else:
+            logger.error(f"Failed to upload file after 3 attempts")
             return False
 
     async def upload_file(self, file_content, mime_type):
