@@ -467,10 +467,10 @@ class ChatService:
             try:
                 headers = self.base_headers.copy()
                 headers.update({
-                        'accept': 'application/json, text/plain, */*',
-                        'content-type': mime_type,
-                        'x-ms-blob-type': 'BlockBlob',
-                        'x-ms-version': '2020-04-08',
+                    'accept': 'application/json, text/plain, */*',
+                    'content-type': mime_type,
+                    'x-ms-blob-type': 'BlockBlob',
+                    'x-ms-version': '2020-04-08',
                 })
                 r = await self.s.put(upload_url, headers=headers, data=file_content, timeout=120)
                 if r.status_code == 201:
@@ -479,6 +479,7 @@ class ChatService:
                     raise HTTPException(status_code=r.status_code, detail=r.text)
             except Exception as e:
                 logger.error(f"Failed to upload file: {e}")
+                await asyncio.sleep(2)
         else:
             logger.error(f"Failed to upload file after 3 attempts")
             return False
