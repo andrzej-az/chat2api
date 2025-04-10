@@ -104,12 +104,11 @@ class ChatService:
         self.chat_headers = None
         self.chat_request = None
 
-        self.base_headers = {
+        self.origin_base_headers = {
             'accept': '*/*',
             'accept-encoding': 'gzip, deflate, br, zstd',
             'accept-language': 'en-US,en;q=0.9',
             'content-type': 'application/json',
-            'oai-language': oai_language,
             'origin': self.host_url,
             'priority': 'u=1, i',
             'referer': f'{self.host_url}/',
@@ -117,7 +116,10 @@ class ChatService:
             'sec-fetch-mode': 'cors',
             'sec-fetch-site': 'same-origin'
         }
+
+        self.base_headers = self.origin_base_headers.copy()
         self.base_headers.update(self.fp)
+        self.base_headers['oai-language'] = oai_language
 
         if self.access_token:
             self.base_url = self.host_url + "/backend-api"
@@ -465,7 +467,7 @@ class ChatService:
     async def upload(self, upload_url, file_content, mime_type):
         for i in range(3):
             try:
-                headers = self.base_headers.copy()
+                headers = self.origin_base_headers.copy()
                 headers.update({
                     'accept': 'application/json, text/plain, */*',
                     'content-type': mime_type,
@@ -479,7 +481,7 @@ class ChatService:
                     raise HTTPException(status_code=r.status_code, detail=r.text)
             except Exception as e:
                 logger.error(f"Failed to upload file: {e}")
-                await asyncio.sleep(2)
+                await asyncio.sleep(1)
         else:
             logger.error(f"Failed to upload file after 3 attempts")
             return False
