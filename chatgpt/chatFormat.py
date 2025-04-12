@@ -240,7 +240,7 @@ async def stream_response(service, response, model, max_tokens):
                                 completed_rate = current_height / full_height
                                 if last_completed_rate and last_completed_rate == completed_rate:
                                     completed_rate = min(completed_rate + random.uniform(1, 3), 99.99)
-                                new_text = f"\n> {completed_rate:.2%...}\n"
+                                new_text = f"\n> {completed_rate:.2%}...\n"
                                 if last_role != role:
                                     new_text = f"\n```{new_text}"
                             else:
