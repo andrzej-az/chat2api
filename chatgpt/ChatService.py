@@ -404,7 +404,7 @@ class ChatService:
         url = f"{self.base_url}/files/{file_id}/download"
         headers = self.base_headers.copy()
         try:
-            r = await self.s.get(url, headers=headers, timeout=10)
+            r = await self.s.get(url, headers=headers, timeout=30)
             if r.status_code == 200:
                 download_url = r.json().get('download_url')
                 return download_url
@@ -418,7 +418,7 @@ class ChatService:
         url = f"{self.base_url}/conversation/{conversation_id}/attachment/{file_id}/download"
         headers = self.base_headers.copy()
         try:
-            r = await self.s.get(url, headers=headers, timeout=10)
+            r = await self.s.get(url, headers=headers, timeout=30)
             if r.status_code == 200:
                 download_url = r.json().get('download_url')
                 return download_url
@@ -432,7 +432,7 @@ class ChatService:
         url = f"{self.base_url}/files/{file_id}/uploaded"
         headers = self.base_headers.copy()
         try:
-            r = await self.s.post(url, headers=headers, json={}, timeout=10)
+            r = await self.s.post(url, headers=headers, json={}, timeout=30)
             if r.status_code == 200:
                 download_url = r.json().get('download_url')
                 return download_url
@@ -450,7 +450,7 @@ class ChatService:
                 url,
                 headers=headers,
                 json={"file_name": file_name, "file_size": file_size, "reset_rate_limits": False, "timezone_offset_min": -480, "use_case": use_case},
-                timeout=5,
+                timeout=30,
             )
             if r.status_code == 200:
                 res = r.json()

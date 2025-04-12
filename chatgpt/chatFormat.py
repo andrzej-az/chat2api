@@ -138,6 +138,7 @@ async def stream_response(service, response, model, max_tokens):
     last_role = None
     last_content_type = None
     last_status = None
+    last_completed_rate = None
     model_slug = None
     end = False
 
@@ -237,7 +238,9 @@ async def stream_response(service, response, model, max_tokens):
                             current_height = part.get('metadata', {}).get("generation", {}).get("height", 0)
                             if full_height > current_height:
                                 completed_rate = current_height / full_height
-                                new_text = f"\n> {completed_rate:.2%}\n"
+                                if last_completed_rate and last_completed_rate == completed_rate:
+                                    completed_rate = min(completed_rate + random.uniform(1, 3), 99.99)
+                                new_text = f"\n> {completed_rate:.2%...}\n"
                                 if last_role != role:
                                     new_text = f"\n```{new_text}"
                             else:
