@@ -1,5 +1,6 @@
 import random
 
+from curl_cffi import CurlOpt
 from curl_cffi.requests import AsyncSession
 
 
@@ -15,16 +16,18 @@ class Client:
         # self.ja3 = ""
         # self.akamai = ""
         # ja3=self.ja3, akamai=self.akamai
-        self.session = AsyncSession(proxies=self.proxies, timeout=self.timeout, impersonate=self.impersonate, verify=self.verify)
+        curl_options = {
+            CurlOpt.LOW_SPEED_LIMIT: 1,
+            CurlOpt.LOW_SPEED_TIME: 30
+        }
+        self.session = AsyncSession(proxies=self.proxies, timeout=self.timeout, impersonate=self.impersonate, verify=self.verify, curl_options=curl_options)
 
     async def post(self, *args, **kwargs):
         r = await self.session.post(*args, **kwargs)
         return r
 
     async def post_stream(self, *args, **kwargs):
-        self.session.timeout = 600
         r = await self.session.post(*args, **kwargs)
-        self.session.timeout = 30
         return r
 
     async def get(self, *args, **kwargs):
@@ -44,11 +47,5 @@ class Client:
             try:
                 await self.session.close()
                 del self.session
-            except Exception:
-                pass
-        if hasattr(self, 'session2'):
-            try:
-                await self.session2.close()
-                del self.session2
             except Exception:
                 pass
