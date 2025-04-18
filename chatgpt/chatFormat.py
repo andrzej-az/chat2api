@@ -110,7 +110,8 @@ async def wss_stream_response(websocket, conversation_id):
 
 async def head_process_response(response):
     async for chunk in response:
-        chunk = chunk.decode("utf-8")
+        # print(chunk)
+        # chunk = chunk.decode("utf-8")
         if chunk.startswith("data: {"):
             chunk_old_data = json.loads(chunk[6:])
             message = chunk_old_data.get("message", {})
@@ -161,7 +162,8 @@ async def stream_response(service, response, model, max_tokens):
     yield f"data: {json.dumps(chunk_new_data)}\n\n"
 
     async for chunk in response:
-        chunk = chunk.decode("utf-8")
+        # print(chunk)
+        # chunk = chunk.decode("utf-8")
         if end:
             logger.info(f"Response Model: {model_slug}")
             yield "data: [DONE]\n\n"
