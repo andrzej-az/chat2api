@@ -12,3 +12,4 @@ APScheduler
 ua-generator
 pyjwt
 diskcache
+jsonpatch
