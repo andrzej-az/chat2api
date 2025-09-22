@@ -17,31 +17,31 @@ services:
     volumes:
       - ./warpdata:/var/lib/cloudflare-warp
     networks:
-      - internal_network  # 使用内部网络，不对外暴露端口
+      - internal_network  # Use internal network, do not expose ports to the outside
     healthcheck:
-      test: ["CMD", "curl", "-f", "-s", "https://www.google.com"]  # 静默模式下请求Google，如果成功返回2xx状态码
-      interval: 30s  # 每隔30秒检查一次
-      timeout: 10s   # 请求超时10秒
-      retries: 3     # 失败3次后标记为不健康
-      start_period: 5s  # 容器启动后等待5秒再开始检查
+      test: ["CMD", "curl", "-f", "-s", "https://www.google.com"]  # Request Google in silent mode, if successful returns a 2xx status code
+      interval: 30s  # Check every 30 seconds
+      timeout: 10s   # Request timeout 10 seconds
+      retries: 3     # Mark as unhealthy after 3 failures
+      start_period: 5s  # Wait 5 seconds after container starts before starting checks
       
   chat2api:
-    image: lanqian528/chat2api:latest
+    image: andrzejaz/chat2api:latest
     container_name: chat2api
     restart: unless-stopped
     ports:
-      - '5005:5005'  # 暴露chat2api服务供外部访问
+      - '5005:5005'  # Expose chat2api service for external access
     environment:
       - TZ=Asia/Shanghai
       - AUTHORIZATION=sk-xxx
-      - PROXY_URL=socks5://warp:1080  # 设置 PROXY_URL 为 warp 容器的代理地址
+      - PROXY_URL=socks5://warp:1080  # Set PROXY_URL to the proxy address of the warp container
     depends_on:
       warp:
-        condition: service_healthy  # 只有 warp 的健康检查通过时，chat2api 才会启动
+        condition: service_healthy  # chat2api will only start when warp's health check passes
     networks:
-      - internal_network  # chat2api 和 warp 在同一个内部网络
+      - internal_network  # chat2api and warp are on the same internal network
     volumes:
-      - ./data:/app/data # 挂载一些需要保存的数据
+      - ./data:/app/data # Mount some data that needs to be persisted
 
   watchtower:
     image: containrrr/watchtower
@@ -53,4 +53,4 @@ services:
     
 networks:
   internal_network:
-    driver: bridge  # 定义一个桥接网络
+    driver: bridge  # Define a bridge network
