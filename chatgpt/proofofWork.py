@@ -92,7 +92,7 @@ navigator_key = [
     "requestMediaKeySystemAccess−function requestMediaKeySystemAccess() { [native code] }",
     "vendor−Google Inc.",
     "pdfViewerEnabled−true",
-    "language−zh-CN",
+    "language−en-US",
     "setAppBadge−function setAppBadge() { [native code] }",
     "geolocation−[object Geolocation]",
     "userAgentData−[object NavigatorUAData]",
